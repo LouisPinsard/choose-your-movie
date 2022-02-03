@@ -1,6 +1,7 @@
 import type { AWS } from "@serverless/typescript";
 import login from "@functions/login";
 import { createStack } from "cdk/stack";
+import { popularMovie } from "@functions/index";
 
 const { stack, app, resources } = createStack();
 
@@ -25,7 +26,7 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
     },
   },
-  functions: { login },
+  functions: { login, popularMovie },
   package: { individually: true },
   custom: {
     cognitoAppClientId: stack.resolve(

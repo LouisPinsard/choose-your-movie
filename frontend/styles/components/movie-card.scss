@@ -1,0 +1,33 @@
+@import '../stylesheet';
+
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-height: 600px;
+  border: solid 2px $dark-blue;
+  padding: calc(2*$margin);
+  width: 350px;
+  border-radius: $margin;
+  box-shadow: $box-shadow $box-shadow $box-shadow $dark-blue;
+}
+
+.movie-card__title {
+  margin-bottom: $margin;
+  color: $dark-blue;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.movie-card__add {
+  margin-top: calc(2*$margin);
+  fill: $dark-blue;
+  transition: fill .2s ease;
+}
+
+.movie-card__add:hover {
+  fill: $light-blue;
+  cursor: pointer;
+}

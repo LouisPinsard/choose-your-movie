@@ -9,6 +9,7 @@ import {
 } from "remix";
 import type { MetaFunction } from "remix";
 import { F } from "ts-toolbelt";
+import type { LinksFunction } from "remix";
 
 export const meta: MetaFunction = () => {
   return { title: "New Remix App" };
@@ -21,6 +22,15 @@ export function loader() {
     },
   };
 }
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css",
+    },
+  ];
+};
 
 export default function App() {
   const data = useLoaderData<F.Return<typeof loader>>();

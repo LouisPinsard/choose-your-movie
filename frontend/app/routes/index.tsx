@@ -1,11 +1,33 @@
+import axios, { AxiosResponse } from "axios";
 import jwtDecode from "jwt-decode";
 import { createCookie, LoaderFunction, useLoaderData } from "remix";
+import styles from "styles/index.css";
 import { tokenHasExpired } from "~/auth/auth";
+import { Carousel, links as carouselLinks } from "~/components/Carousel";
+import { MovieCard, links as movieCardLinks } from "~/components/MovieCard";
+import { apiClient } from "~/service/network";
+export interface Movie {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
 
 type loaderData = {
   authUrl: string | undefined;
   isAuthenticated: boolean;
   email?: string;
+  movies: Movie[];
 };
 
 type IdToken = {
@@ -24,28 +46,66 @@ type IdToken = {
   origin_jti: string;
 };
 
-export const loader: LoaderFunction = async ({
-  request,
-}): Promise<loaderData> => {
+export const links = () => [
+  ...movieCardLinks(),
+  ...carouselLinks(),
+  { rel: "stylesheet", href: styles },
+];
+
+const getAuthData = async (request: Request) => {
   const idTokenCookie = createCookie("idToken");
-  const idTokenValue = (await idTokenCookie.parse(
-    request.headers.get("Cookie")
-  )) as string | undefined;
+  let idTokenValue;
+  try {
+    idTokenValue = (await idTokenCookie.parse(
+      request.headers.get("Cookie")
+    )) as string | undefined;
+  } catch (error) {
+    return {
+      isAuthenticated: false,
+    };
+  }
 
   let decodedToken;
   if (idTokenValue !== undefined) {
-    decodedToken = jwtDecode<IdToken>(idTokenValue);
+    try {
+      decodedToken = jwtDecode<IdToken>(idTokenValue);
+    } catch (error) {
+      return {
+        isAuthenticated: false,
+      };
+    }
   }
 
   return {
-    authUrl: process.env.APP_AUTH_URL,
     isAuthenticated: decodedToken ? !tokenHasExpired(decodedToken) : false,
     email: decodedToken?.email,
   };
 };
 
+const getPopularMovies = async () => {
+  const result = await apiClient.get<
+    any,
+    AxiosResponse<{
+      results: Movie[];
+    }>
+  >("movie/popular");
+
+  return result.data.results;
+};
+
+export const loader: LoaderFunction = async ({
+  request,
+}): Promise<loaderData> => {
+  return {
+    authUrl: process.env.APP_AUTH_URL,
+    ...(await getAuthData(request)),
+    movies: await getPopularMovies(),
+  };
+};
+
 export default function Index() {
-  const { isAuthenticated, authUrl, email } = useLoaderData<loaderData>();
+  const { isAuthenticated, authUrl, email, movies } =
+    useLoaderData<loaderData>();
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
@@ -54,6 +114,13 @@ export default function Index() {
       ) : (
         <a href={authUrl}>Log in</a>
       )}
+      <div>
+        <Carousel>
+          {movies.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
+        </Carousel>
+      </div>
     </div>
   );
 }

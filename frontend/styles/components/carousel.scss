@@ -1,0 +1,62 @@
+@import '../stylesheet.scss';
+
+.carousel {
+ overflow: hidden;
+ max-width: 80%;
+}
+
+.inner-carousel {
+  white-space: nowrap;
+  transition: transform 0.3s;
+}
+
+.carousel-item {
+  display: inline-flex;
+  color: #fff;
+  width: 33%;
+  padding: 20px;
+}
+
+@media (max-width: $tablet-width) {
+  .carousel-item {
+    width: 100%;
+  }
+};
+
+.carousel__button__icon {
+  fill: $white;
+}
+
+.carousel__button__icon--previous {
+  transform: rotate(180deg);
+}
+
+.carousel__button {
+  height: 40px;
+  background-color: $dark-blue;
+  border: none;
+  border-radius: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $margin;
+  transition: background-color 0.2s ease;
+}
+
+.carousel__button--previous {
+}
+
+.carousel__button--previous {
+
+}
+
+.carousel__button:hover {
+  background-color: $light-blue;
+}
+
+.carousel-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
