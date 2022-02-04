@@ -1,11 +1,13 @@
-import axios, { AxiosResponse } from "axios";
-import jwtDecode from "jwt-decode";
-import { createCookie, LoaderFunction, useLoaderData } from "remix";
+import { AxiosResponse } from "axios";
+import classNames from "classnames";
+import { useEffect, useState } from "react";
+import { LoaderFunction, useLoaderData, useOutletContext } from "remix";
 import styles from "styles/index.css";
-import { tokenHasExpired } from "~/auth/auth";
 import { Carousel, links as carouselLinks } from "~/components/Carousel";
 import { MovieCard, links as movieCardLinks } from "~/components/MovieCard";
+import { OutletContextType } from "~/root";
 import { apiClient } from "~/service/network";
+
 export interface Movie {
   adult: boolean;
   backdrop_path: string;
@@ -25,25 +27,7 @@ export interface Movie {
 
 type loaderData = {
   authUrl: string | undefined;
-  isAuthenticated: boolean;
-  email?: string;
   movies: Movie[];
-};
-
-type IdToken = {
-  sub: string;
-  aud: string;
-  email_verified: boolean;
-  token_use: string;
-  auth_time: number;
-  iss: string;
-  "cognito:username": string;
-  exp: number;
-  given_name: string;
-  iat: number;
-  email: string;
-  jti: string;
-  origin_jti: string;
 };
 
 export const links = () => [
@@ -51,36 +35,6 @@ export const links = () => [
   ...carouselLinks(),
   { rel: "stylesheet", href: styles },
 ];
-
-const getAuthData = async (request: Request) => {
-  const idTokenCookie = createCookie("idToken");
-  let idTokenValue;
-  try {
-    idTokenValue = (await idTokenCookie.parse(
-      request.headers.get("Cookie")
-    )) as string | undefined;
-  } catch (error) {
-    return {
-      isAuthenticated: false,
-    };
-  }
-
-  let decodedToken;
-  if (idTokenValue !== undefined) {
-    try {
-      decodedToken = jwtDecode<IdToken>(idTokenValue);
-    } catch (error) {
-      return {
-        isAuthenticated: false,
-      };
-    }
-  }
-
-  return {
-    isAuthenticated: decodedToken ? !tokenHasExpired(decodedToken) : false,
-    email: decodedToken?.email,
-  };
-};
 
 const getPopularMovies = async () => {
   const result = await apiClient.get<
@@ -93,19 +47,41 @@ const getPopularMovies = async () => {
   return result.data.results;
 };
 
-export const loader: LoaderFunction = async ({
-  request,
-}): Promise<loaderData> => {
+export const loader: LoaderFunction = async (): Promise<loaderData> => {
   return {
     authUrl: process.env.APP_AUTH_URL,
-    ...(await getAuthData(request)),
     movies: await getPopularMovies(),
   };
 };
 
 export default function Index() {
-  const { isAuthenticated, authUrl, email, movies } =
-    useLoaderData<loaderData>();
+  const { isAuthenticated, email } = useOutletContext<OutletContextType>();
+  const { authUrl, movies } = useLoaderData<loaderData>();
+  const [displayAuthenticationError, setDisplayAuthenticationError] =
+    useState(false);
+
+  const onClick = (movie: Movie) => () => {
+    if (!isAuthenticated) {
+      setDisplayAuthenticationError(true);
+    }
+  };
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | undefined;
+    if (displayAuthenticationError) {
+      timeout = setTimeout(() => {
+        setDisplayAuthenticationError(false);
+      }, 3500);
+    }
+
+    return () => {
+      if (timeout !== undefined) {
+        return clearTimeout(timeout);
+      }
+
+      return;
+    };
+  }, [displayAuthenticationError]);
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
@@ -114,12 +90,21 @@ export default function Index() {
       ) : (
         <a href={authUrl}>Log in</a>
       )}
-      <div>
+      <div className="movies-container">
         <Carousel>
           {movies.map((movie) => (
-            <MovieCard movie={movie} />
+            <MovieCard movie={movie} onClick={onClick(movie)} />
           ))}
         </Carousel>
+        {
+          <div
+            className={classNames("authentication-error", {
+              "authentication-error--visible": displayAuthenticationError,
+            })}
+          >
+            You must be logged in to add a movie to your collection
+          </div>
+        }
       </div>
     </div>
   );

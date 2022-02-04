@@ -1,2 +1,18 @@
-.movie-card-container {
+@import './stylesheet.scss';
+
+.authentication-error {
+  color: $red;
+  position: absolute;
+  bottom: -40px;
+  left: calc(50% - 200px);
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.authentication-error.authentication-error--visible {
+  opacity: 1;
+}
+
+.movies-container {
+  position: relative;
 }

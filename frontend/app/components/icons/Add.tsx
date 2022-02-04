@@ -1,11 +1,15 @@
+import React from "react";
+
 export const Add: React.FunctionComponent<{
   width: number;
   className?: string;
-}> = ({ width, className }) => {
+  onClick: React.MouseEventHandler;
+}> = ({ width, className, onClick }) => {
   return (
     <svg
       className={className}
       id="Layer_1"
+      onClick={onClick}
       viewBox="0 0 24 24"
       width={width}
       xmlns="http://www.w3.org/2000/svg"
