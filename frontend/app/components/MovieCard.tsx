@@ -4,15 +4,7 @@ import { Movie } from "../routes/index";
 import { Add } from "./icons/Add";
 
 export function links() {
-  return [
-    {
-      rel: "preload",
-      href: "../../icons/add.svg",
-      as: "image",
-      type: "image/svg+xml",
-    },
-    { rel: "stylesheet", href: styles },
-  ];
+  return [{ rel: "stylesheet", href: styles }];
 }
 
 export const MovieCard: React.FunctionComponent<{

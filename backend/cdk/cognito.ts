@@ -52,5 +52,6 @@ export const createCognitoResources = (stack: Stack) => {
   return {
     userPool,
     userPoolAppClient,
+    userPoolIdentityProvider,
   };
 };
