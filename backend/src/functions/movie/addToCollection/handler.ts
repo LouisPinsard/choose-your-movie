@@ -34,15 +34,20 @@ const addToCollection: ValidatedEventAPIGatewayProxyEventWithAutorizer<
     `/movie/${event.body.id}`
   );
 
-  const dynamoDBResponse = await table.getModel<UserMovie>("UserMovie").create({
-    ...data,
-    genreIds: data.genre_ids,
-    voteAverage: data.vote_average,
-    voteCount: data.vote_count,
-    posterPath: data.poster_path,
-    releaseDate: data.release_date,
-    username: event.requestContext.authorizer.claims.email,
-  });
+  const dynamoDBResponse = await table.getModel<UserMovie>("UserMovie").create(
+    {
+      ...data,
+      genreIds: data.genre_ids,
+      voteAverage: data.vote_average,
+      voteCount: data.vote_count,
+      posterPath: data.poster_path,
+      releaseDate: data.release_date,
+      username: event.requestContext.authorizer.claims.email,
+    },
+    {
+      exists: null,
+    }
+  );
 
   return formatJSONResponse(dynamoDBResponse);
 };

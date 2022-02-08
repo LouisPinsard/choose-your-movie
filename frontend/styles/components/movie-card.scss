@@ -21,10 +21,30 @@
   max-width: 100%;
 }
 
-.movie-card__add {
+.movie-card__button {
+  border: none;
   margin-top: calc(2*$margin);
+  background-color: inherit;
+}
+
+.movie-card__add {
   fill: $dark-blue;
   transition: fill .2s ease;
+}
+
+.movie-card__added {
+  fill: $dark-blue;
+  margin-top: calc(2*$margin);
+}
+
+.movie-card__removed {
+  fill: $light-blue;
+  margin-top: calc(2*$margin);
+}
+
+.movie-card__added {
+  fill: $dark-blue;
+  margin-top: calc(2*$margin);
 }
 
 .movie-card__add:hover {

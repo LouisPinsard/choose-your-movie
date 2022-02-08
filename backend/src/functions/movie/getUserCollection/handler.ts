@@ -32,10 +32,13 @@ const getUserCollection: ValidatedEventAPIGatewayProxyEvent<undefined> = async (
     throw new createHttpError.BadRequest("Missing path parameters user id");
   }
 
-  const dynamoDBResponse = (await table.queryItems({
-    PK: `user:${event.pathParameters.userId}`,
-    SK: { begins: "movie:" },
-  })) as Paged<UserMovie>;
+  const dynamoDBResponse = (await table.queryItems(
+    {
+      PK: `user:${event.pathParameters.userId}`,
+      SK: { begins: "movie:" },
+    },
+    { parse: true }
+  )) as Paged<UserMovie>;
 
   return formatJSONResponse({ result: dynamoDBResponse });
 };

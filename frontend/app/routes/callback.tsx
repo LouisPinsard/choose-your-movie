@@ -13,8 +13,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     code,
   });
 
-  console.log(result.data);
-
   const accessTokenCookie = createCookie("accessToken");
   const refreshTokenCookie = createCookie("refreshToken", { httpOnly: true });
   const idTokenCookie = createCookie("idToken");

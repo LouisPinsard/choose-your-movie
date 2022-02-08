@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 export const apiClient = axios.create({
   // should be in an env variable
@@ -7,3 +7,14 @@ export const apiClient = axios.create({
   // eslint-disable-next-line
   baseURL: process.env?.BASE_API_URL,
 });
+
+export const post = (
+  url: string,
+  data: object,
+  withAuthentication: boolean
+) => {
+  if (withAuthentication) {
+  }
+
+  return apiClient.post(url, data);
+};
