@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "styles/components/carousel.css";
+import { v4 as uuidv4 } from "uuid";
 import { Next } from "./icons/Next";
 
 export function links() {
@@ -76,7 +77,11 @@ export const Carousel: React.FunctionComponent = ({ children }) => {
           }}
         >
           {React.Children.map(children, (child) => {
-            return <div className="carousel-item">{child}</div>;
+            return (
+              <div key={uuidv4()} className="carousel-item">
+                {child}
+              </div>
+            );
           })}
         </div>
         <div className="indicators"></div>
