@@ -6,7 +6,7 @@ import styles from "styles/index.css";
 import { Carousel, links as carouselLinks } from "~/components/Carousel";
 import { MovieCard, links as movieCardLinks } from "~/components/MovieCard";
 import { OutletContextType } from "~/root";
-import { apiClient } from "~/service/network";
+import { apiClient } from "~/service/network.server";
 
 export interface Movie {
   adult: boolean;

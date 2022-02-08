@@ -82,6 +82,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     ...(await getAuthData(request)),
     ENV: {
       APP_AUTH_URL: process.env.APP_AUTH_URL,
+      BASE_API_URL: process.env.BASE_API_URL,
     },
   };
 };

@@ -1,6 +1,6 @@
 import { createCookie, LoaderFunction, redirect } from "remix";
 import invariant from "tiny-invariant";
-import { apiClient } from "~/service/network";
+import { apiClient } from "~/service/network.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const url = new URL(request.url);
